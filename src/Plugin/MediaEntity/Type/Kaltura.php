@@ -122,7 +122,7 @@ class Kaltura extends MediaTypeBase {
    * @inheritDoc
    */
   public function getField(MediaInterface $media, $name) {
-    if (($url = $this->getOgUrl($media)) && ($data = $this->getData($url)) && isset($data['src'])) {
+    if (($url = $this->getMediaUrl($media)) && ($data = $this->getData($url)) && isset($data['src'])) {
       switch ($name) {
         case 'thumbnail_uri':
           if (isset($data['thumbnail_url'])) {
