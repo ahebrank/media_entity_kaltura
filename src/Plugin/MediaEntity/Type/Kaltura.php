@@ -113,7 +113,6 @@ class Kaltura extends MediaTypeBase {
       'entry_id' => $this->t('The entry id'),
       'partner_id' => $this->t('The partner id'),
       'ui_conf_id' => $this->t('The conf id'),
-      'player_id' => $this->t('The player id'),
       'thumbnail_uri' => $this->t('URI of the thumbnail'),
     ];
   }
@@ -142,28 +141,21 @@ class Kaltura extends MediaTypeBase {
           return FALSE;
         case 'entry_id':
           // Extract the id from the src.
-          preg_match('/entry_id=([a-zA-Z0-9_]*)/', urldecode($data['src']), $matches);
+          preg_match('/entry_id=([a-zA-Z0-9_]*)/', $data['src'], $matches);
           if (!count($matches)) {
             return FALSE;
           }
           return $matches[1];
         case 'partner_id':
           // Extract the id from the src.
-          preg_match('/\/p\/([a-zA-Z0-9_]*)/', urldecode($data['src']), $matches);
-          if (!count($matches)) {
-            return FALSE;
-          }
-          return $matches[1];
-        case 'player_id':
-          // Extract the id from the src.
-          preg_match('/playerId=([a-zA-Z0-9_]*)/', urldecode($data['src']), $matches);
+          preg_match('/\/p\/([a-zA-Z0-9_]*)/', $data['src'], $matches);
           if (!count($matches)) {
             return FALSE;
           }
           return $matches[1];
         case 'ui_conf_id':
           // Extract the id from the src.
-          preg_match('/\/uiconf_id\/([a-zA-Z0-9_]*)/', urldecode($data['src']), $matches);
+          preg_match('/\/uiconf_id\/([a-zA-Z0-9_]*)/', $data['src'], $matches);
           if (!count($matches)) {
             return FALSE;
           }
@@ -232,7 +224,10 @@ class Kaltura extends MediaTypeBase {
       $data = (string) $response->getBody();
 
       $dom = new DOMDocument();
+      // Kaltura pages have broken markup...
+      $internalErrors = libxml_use_internal_errors(true);
       $dom->loadHTML($data);
+      libxml_use_internal_errors($internalErrors);
       
       // search for the embed
       $nodes = $dom->getElementsByTagName('meta');
@@ -240,6 +235,7 @@ class Kaltura extends MediaTypeBase {
         $prop = $node->getAttribute('property');
         if ($prop == 'og:video:url') {
           $this->kaltura['src'] = $node->getAttribute('content');
+          break;
         }
       }
 
@@ -250,6 +246,7 @@ class Kaltura extends MediaTypeBase {
         if ($property == 'og:image') {
           $this->kaltura['thumbnail_url'] = $node->getAttribute('content');
           $this->kaltura['thumbnail_url'] = str_replace("http://", "https://", $this->kaltura['thumbnail_url']);
+          break;
         }
       }
     }

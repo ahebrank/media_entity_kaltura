@@ -86,14 +86,12 @@ class KalturaEmbedFormatter extends FormatterBase {
       /** @var MediaTypeInterface $item */
       foreach ($items as $delta => $item) {
         $entry_id = $type->getField($media_entity, 'entry_id');
-        $player_id = $type->getField($media_entity, 'player_id');
         $partner_id = $type->getField($media_entity, 'partner_id');
         $ui_conf_id = $type->getField($media_entity, 'ui_conf_id');
 
-        if ($entry_id && $player_id && $partner_id && $ui_conf_id) {
+        if ($entry_id && $partner_id && $ui_conf_id) {
           $element[$delta] = [
             '#theme' => 'media_kaltura_embed',
-            '#playerId' => $player_id,
             '#partnerId' => $partner_id,
             '#uiConfId' => $ui_conf_id,
             '#entryId' => $entry_id,
