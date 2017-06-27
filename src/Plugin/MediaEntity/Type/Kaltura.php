@@ -246,7 +246,7 @@ class Kaltura extends MediaTypeBase {
         $property = $node->getAttribute('property');
         if ($property == 'og:image') {
           $this->kaltura['thumbnail_url'] = $node->getAttribute('content');
-          $this->kaltura['thumbnail_url'] = str_replace("http://", "https://", $this->kaltura['thumbnail_url']);
+          $this->kaltura['thumbnail_url'] = str_replace("http://cdnapi", "https://cdnapisec", $this->kaltura['thumbnail_url']);
           break;
         }
       }
