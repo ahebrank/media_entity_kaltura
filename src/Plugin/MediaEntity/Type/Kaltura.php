@@ -126,7 +126,8 @@ class Kaltura extends MediaTypeBase {
         case 'thumbnail_uri':
           if (isset($data['thumbnail_url'])) {
             $destination = $this->configFactory->get('media_entity_kaltura.settings')->get('thumbnail_destination');
-            $local_uri = $destination . '/' . pathinfo($data['thumbnail_url'], PATHINFO_BASENAME);
+            $hash = md5($data['thumbnail_url']);
+            $local_uri = $destination . '/' . $hash;
 
             // Save the file if it does not exist.
             if (!file_exists($local_uri)) {
