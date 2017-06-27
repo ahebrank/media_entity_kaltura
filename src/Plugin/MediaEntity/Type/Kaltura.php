@@ -242,10 +242,10 @@ class Kaltura extends MediaTypeBase {
       // thumbnail
       $nodes = $dom->getElementsByTagName('meta');
       foreach ($nodes as $node) {
-        $property = $node->getAttribute('property');
-        if ($property == 'og:image') {
+        $prop = $node->getAttribute('property');
+        if ($prop == 'og:image') {
           $this->kaltura['thumbnail_url'] = $node->getAttribute('content');
-          $this->kaltura['thumbnail_url'] = str_replace("http://", "https://", $this->kaltura['thumbnail_url']);
+          $this->kaltura['thumbnail_url'] = str_replace("http://cdnapi", "https://cdnapisec", $this->kaltura['thumbnail_url']);
           break;
         }
       }
