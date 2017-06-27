@@ -19,7 +19,7 @@ use \DOMDocument;
  *
  * @MediaType(
  *   id = "kaltura",
- *   label = @Translation("kaltura"),
+ *   label = @Translation("Kaltura"),
  *   description = @Translation("Provides business logic and metadata for Kaltura.")
  * )
  */
@@ -126,9 +126,7 @@ class Kaltura extends MediaTypeBase {
         case 'thumbnail_uri':
           if (isset($data['thumbnail_url'])) {
             $destination = $this->configFactory->get('media_entity_kaltura.settings')->get('thumbnail_destination');
-            
-            $hash = md5($data['thumbnail_url']);
-            $local_uri = $destination . '/' . $hash;
+            $local_uri = $destination . '/' . pathinfo($data['thumbnail_url'], PATHINFO_BASENAME);
 
             // Save the file if it does not exist.
             if (!file_exists($local_uri)) {
@@ -244,10 +242,10 @@ class Kaltura extends MediaTypeBase {
       // thumbnail
       $nodes = $dom->getElementsByTagName('meta');
       foreach ($nodes as $node) {
-        $prop = $node->getAttribute('property');
-        if ($prop == 'og:image') {
+        $property = $node->getAttribute('property');
+        if ($property == 'og:image') {
           $this->kaltura['thumbnail_url'] = $node->getAttribute('content');
-          $this->kaltura['thumbnail_url'] = str_replace("http://cdnapi", "https://cdnapisec", $this->kaltura['thumbnail_url']);
+          $this->kaltura['thumbnail_url'] = str_replace("http://", "https://", $this->kaltura['thumbnail_url']);
           break;
         }
       }

@@ -13,7 +13,7 @@ use Drupal\media_entity_kaltura\Plugin\MediaEntity\Type\Kaltura;
  *
  * @FieldFormatter(
  *   id = "kaltura_embed",
- *   label = @Translation("kaltura embed"),
+ *   label = @Translation("Kaltura Embed"),
  *   field_types = {
  *     "link", "string", "string_long"
  *   }
