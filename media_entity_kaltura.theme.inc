@@ -12,5 +12,5 @@
  */
 function template_preprocess_media_kaltura_embed(&$variables) {
     // make up an element ID
-    $variables['playerId'] = 'kaltura-' . uniqid();
+    $variables['playerId'] = 'kaltura-' . $variables['entryId'];
 }

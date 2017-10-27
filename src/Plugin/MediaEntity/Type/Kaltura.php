@@ -218,9 +218,13 @@ class Kaltura extends MediaTypeBase {
    *  An array of embed data.
    */
   protected function getData($url) {
-    $this->kaltura = &drupal_static(__FUNCTION__);
+    $cid = 'media_embed_kaltura:' . md5($url);
 
-    if (!isset($this->kaltura)) {
+    if ($cache = \Drupal::cache()->get($cid)) {
+      $kaltura = $cache->data;
+    }
+    else {
+      $kaltura = [];
       $response = $this->httpClient->get($url);
       $data = (string) $response->getBody();
 
@@ -235,7 +239,7 @@ class Kaltura extends MediaTypeBase {
       foreach ($nodes as $node) {
         $prop = $node->getAttribute('property');
         if ($prop == 'og:video:url') {
-          $this->kaltura['src'] = $node->getAttribute('content');
+          $kaltura['src'] = $node->getAttribute('content');
           break;
         }
       }
@@ -245,13 +249,15 @@ class Kaltura extends MediaTypeBase {
       foreach ($nodes as $node) {
         $property = $node->getAttribute('property');
         if ($property == 'og:image') {
-          $this->kaltura['thumbnail_url'] = $node->getAttribute('content');
-          $this->kaltura['thumbnail_url'] = str_replace("http://cdnapi", "https://cdnapisec", $this->kaltura['thumbnail_url']);
+          $kaltura['thumbnail_url'] = $node->getAttribute('content');
+          $kaltura['thumbnail_url'] = str_replace("http://cdnapi", "https://cdnapisec", $this->kaltura['thumbnail_url']);
           break;
         }
       }
+
+      \Drupal::cache()->set($cid, $kaltura);
     }
 
-    return $this->kaltura;
+    return $kaltura;
   }
 }
