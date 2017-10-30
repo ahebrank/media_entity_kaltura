@@ -16,6 +16,7 @@ function media_entity_kaltura_theme($existing, $type, $theme, $path) {
         'partnerId' => NULL,
         'entryId' => NULL,
         'uiConfId' => NULL,
+        'flashVars' => NULL,
         'width' => NULL,
         'height' => NULL,
       ],

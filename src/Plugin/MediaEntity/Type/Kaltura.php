@@ -111,6 +111,7 @@ class Kaltura extends MediaTypeBase {
   public function providedFields() {
     return [
       'entry_id' => $this->t('The entry id'),
+      'flash_vars' => $this->t('Flash variables'),
       'partner_id' => $this->t('The partner id'),
       'ui_conf_id' => $this->t('The conf id'),
       'thumbnail_uri' => $this->t('URI of the thumbnail'),
@@ -122,6 +123,7 @@ class Kaltura extends MediaTypeBase {
    */
   public function getField(MediaInterface $media, $name) {
     if (($url = $this->getMediaUrl($media)) && ($data = $this->getData($url)) && isset($data['src'])) {
+      $data['src'] = urldecode($data['src']);
       switch ($name) {
         case 'thumbnail_uri':
           if (isset($data['thumbnail_url'])) {
@@ -161,6 +163,16 @@ class Kaltura extends MediaTypeBase {
             return FALSE;
           }
           return $matches[1];
+        case 'flash_vars':
+          preg_match_all('/flashvars\[([A-Za-z0-9_\-\.]+)\]=([A-Za-z0-9_\-\.]+)/', $data['src'], $matches);
+          if (!count($matches)) {
+            return FALSE;
+          }
+          $vars = [];
+          foreach ($matches[0] as $i => $m) {
+            $vars[$matches[1][$i]] = $matches[2][$i];
+          }
+          return $vars;
       }
     }
 
@@ -209,7 +221,8 @@ class Kaltura extends MediaTypeBase {
   }
 
   /**
-   * Returns oembed data for a Soundcloud url.
+   * Returns oembed data for a Kaltura url.
+   * supports standard frontend and preview (for playlist vids)
    *
    * @param string $url
    *   The kaltura Url.
@@ -243,7 +256,6 @@ class Kaltura extends MediaTypeBase {
           break;
         }
       }
-
       // thumbnail
       $nodes = $dom->getElementsByTagName('meta');
       foreach ($nodes as $node) {
@@ -252,6 +264,27 @@ class Kaltura extends MediaTypeBase {
           $kaltura['thumbnail_url'] = $node->getAttribute('content');
           $kaltura['thumbnail_url'] = str_replace("http://cdnapi", "https://cdnapisec", $this->kaltura['thumbnail_url']);
           break;
+        }
+      }
+
+      // haven't found a src? search for a codegenerator
+      if (!isset($kaltura['src'])) {
+        $nodes = $dom->getElementsByTagName('script');
+        foreach ($nodes as $node) {
+          $inner = $node->nodeValue;
+          if (preg_match_all('/kEmbedCodeGenerator\((.*)\)\.getCode/', $inner, $matches)) {
+            $json = $matches[1][0];
+            $json_data = json_decode($json, TRUE);
+            $kaltura['src'] = sprintf("https://cdnapisec.kaltura.com/p/%s/sp/%s00/embedIframeJs/uiconf_id/%s/partner_id/%s?iframeembed=true&playerId=kaltura_player",
+              $json_data['partnerId'], $json_data['partnerId'], $json_data['uiConfId'], $json_data['partnerId']);
+            if (isset($json_data['flashVars'])) {
+              $params = [];
+              foreach ($json_data['flashVars'] as $k => $v) {
+                $params['flashvars[' . $k . ']'] = $v;
+              }
+              $kaltura['src'] .= '&' . http_build_query($params);
+            }
+          }
         }
       }
 

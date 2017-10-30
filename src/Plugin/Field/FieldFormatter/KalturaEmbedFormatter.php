@@ -88,13 +88,15 @@ class KalturaEmbedFormatter extends FormatterBase {
         $entry_id = $type->getField($media_entity, 'entry_id');
         $partner_id = $type->getField($media_entity, 'partner_id');
         $ui_conf_id = $type->getField($media_entity, 'ui_conf_id');
+        $flash_vars = $type->getField($media_entity, 'flash_vars');
 
-        if ($entry_id && $partner_id && $ui_conf_id) {
+        if (($entry_id || $flash_vars) && $partner_id && $ui_conf_id) {
           $element[$delta] = [
             '#theme' => 'media_kaltura_embed',
             '#partnerId' => $partner_id,
             '#uiConfId' => $ui_conf_id,
             '#entryId' => $entry_id,
+            '#flashVars' => $flash_vars,
             '#width' => $this->getSetting('width'),
             '#height' => $this->getSetting('height'),
           ];

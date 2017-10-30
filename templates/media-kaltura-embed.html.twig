@@ -16,7 +16,7 @@
  * @ingroup themeable
  */
 #}
-<iframe src="https://cdnapisec.kaltura.com/p/{{ partnerId }}/sp/{{ partnerId }}/embedIframeJs/uiconf_id/{{ uiConfId }}/partner_id/{{ partnerId }}?iframeembed=true&playerId={{ playerId }}&flashvars[streamerType]=auto&entry_id={{ entryId }}" width="{{ width}}" height="{{ height }}" allowfullscreen webkitallowfullscreen mozAllowFullScreen frameborder="0" style="width: {{ width }}px; height: {{ height }}px;" itemprop="video" itemscope itemtype="http://schema.org/VideoObject">
+<iframe src="https://cdnapisec.kaltura.com/p/{{ partnerId }}/sp/{{ partnerId }}00/embedIframeJs/uiconf_id/{{ uiConfId }}/partner_id/{{ partnerId }}?iframeembed=true{% if playerId %}&playerId={{ playerId }}{% endif %}&flashvars[streamerType]=auto{{ extraFlashVars }}{% if entryId %}&entry_id={{ entryId }}{% endif %}" width="{{ width}}" height="{{ height }}" allowfullscreen webkitallowfullscreen mozAllowFullScreen frameborder="0" style="width: {{ width }}px; height: {{ height }}px;" itemprop="video" itemscope itemtype="http://schema.org/VideoObject">
     <span itemprop="name" content=""></span>
     <span itemprop="description" content=""></span>
     <span itemprop="duration" content=""></span>
