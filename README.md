@@ -1,19 +1,19 @@
 # Media Entity Kaltura
-Kaltura integration for the [Media Entity](https://www.drupal.org/project/media_entity) module.
+Kaltura integration for the Media core module.
 
 ## Installation
 
-1. Enable the media_entity and media_entity_kaltura module.
-2. Go to `/admin/structure/media` and click 'Add media bundle' to create a new bundle.
-3. Under **Type provider** select Kaltura.
-4. Save the bundle.
-5. Add a field to the bundle to store the kaltura url.
-6. Edit the bundle again, and select the field created above as the **Kaltura URL source field**.
+1. Recommended way to install this module is via `composer require drupal/media_entity_kaltura`. Otherwise make sure to install all of its dependencies from _composer.json_ manually.
+2. Enable the media_entity_kaltura module.
+3. Go to `/admin/config/media/media-kaltura` and supply all necessary data for integration with your Kaltura service.
+4. Go to `/admin/structure/media` and click 'Add media type' to create a new media type.
+5. Under **Media source** select Kaltura.
+6. Save the form.
 
 ## Configuration
 
-1. Go to the **Manage display** section for the media bundle.
-2. For the source field selected, select **Kaltura embed** under **Format**.
+1. Go to the **Manage display** section for the media type.
+2. For the source field, select **Kaltura Embed** under **Format**.
 3. Click on the settings icon to configure the embedded player.
 4. Save.
 

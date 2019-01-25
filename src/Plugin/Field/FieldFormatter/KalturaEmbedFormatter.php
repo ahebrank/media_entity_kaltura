@@ -5,8 +5,7 @@ namespace Drupal\media_entity_kaltura\Plugin\Field\FieldFormatter;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\FormatterBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\media_entity\MediaTypeInterface;
-use Drupal\media_entity_kaltura\Plugin\MediaEntity\Type\Kaltura;
+use Drupal\media_entity_kaltura\Plugin\media\Source\Kaltura;
 
 /**
  * Plugin implementation of the 'kaltura_embed' formatter.
@@ -25,10 +24,10 @@ class KalturaEmbedFormatter extends FormatterBase {
    * @inheritDoc
    */
   public static function defaultSettings() {
-    return array(
-        'width' => '400',
-        'height' => '285',
-      ) + parent::defaultSettings();
+    return [
+      'width' => '400',
+      'height' => '285',
+    ] + parent::defaultSettings();
   }
 
   /**
@@ -38,7 +37,7 @@ class KalturaEmbedFormatter extends FormatterBase {
     $elements = parent::settingsForm($form, $form_state);
 
     $elements['width'] = [
-      '#type' => 'textfield',
+      '#type' => 'number',
       '#title' => $this->t('Width'),
       '#default_value' => $this->getSetting('width'),
       '#min' => 1,
@@ -47,7 +46,7 @@ class KalturaEmbedFormatter extends FormatterBase {
     ];
 
     $elements['height'] = [
-      '#type' => 'textfield',
+      '#type' => 'number',
       '#title' => $this->t('Height'),
       '#default_value' => $this->getSetting('height'),
       '#min' => 1,
@@ -78,25 +77,18 @@ class KalturaEmbedFormatter extends FormatterBase {
    * {@inheritdoc}
    */
   public function viewElements(FieldItemListInterface $items, $langcode) {
-    /** @var \Drupal\media_entity\MediaInterface $media_entity */
+    /** @var \Drupal\media\MediaInterface $media_entity */
     $media_entity = $items->getEntity();
 
     $element = [];
-    if (($type = $media_entity->getType()) && $type instanceof kaltura) {
-      /** @var MediaTypeInterface $item */
+    if (($type = $media_entity->getSource()) && $type instanceof Kaltura) {
       foreach ($items as $delta => $item) {
-        $entry_id = $type->getField($media_entity, 'entry_id');
-        $partner_id = $type->getField($media_entity, 'partner_id');
-        $ui_conf_id = $type->getField($media_entity, 'ui_conf_id');
-        $flash_vars = $type->getField($media_entity, 'flash_vars');
+        $entry_id = $item->value;
 
-        if (($entry_id || $flash_vars) && $partner_id && $ui_conf_id) {
+        if ($entry_id) {
           $element[$delta] = [
-            '#theme' => 'media_kaltura_embed',
-            '#partnerId' => $partner_id,
-            '#uiConfId' => $ui_conf_id,
-            '#entryId' => $entry_id,
-            '#flashVars' => $flash_vars,
+            '#type' => 'kaltura_player',
+            '#kaltura_entry_id' => $entry_id,
             '#width' => $this->getSetting('width'),
             '#height' => $this->getSetting('height'),
           ];

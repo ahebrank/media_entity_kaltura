@@ -1,0 +1,9 @@
+services:
+  media_entity_kaltura.sdk:
+    class: Drupal\media_entity_kaltura\KalturaSdk
+    arguments: ['@config.factory', '@current_user', '@logger.channel.media_entity_kaltura']
+
+  logger.channel.media_entity_kaltura:
+    class: Drupal\Core\Logger\LoggerChannel
+    factory: logger.factory:get
+    arguments: ['media_entity_kaltura']

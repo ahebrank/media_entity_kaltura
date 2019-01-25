@@ -1,1 +1,4 @@
-thumbnail_destination: 'public://kaltura'
+partner_id: ''
+ui_conf_id: ''
+server_url: ''
+admin_secret: ''

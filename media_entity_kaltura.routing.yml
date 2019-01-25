@@ -1,0 +1,7 @@
+media_entity_kaltura.settings:
+  path: '/admin/config/media/media-kaltura'
+  defaults:
+    _form: '\Drupal\media_entity_kaltura\Form\KalturaAdminForm'
+    _title: 'Kaltura'
+  requirements:
+    _permission: 'administer kaltura'

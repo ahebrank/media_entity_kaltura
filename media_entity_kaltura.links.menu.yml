@@ -1,0 +1,5 @@
+media_entity_kaltura.settings:
+  title: 'Kaltura'
+  parent: system.admin_config_media
+  description: 'Manage Kaltura settings.'
+  route_name: media_entity_kaltura.settings

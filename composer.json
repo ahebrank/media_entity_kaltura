@@ -2,5 +2,8 @@
   "name": "drupal/media_entity_kaltura",
   "description": "Provides a Kaltura media entity.",
   "type": "drupal-module",
-  "license": "GPL-2.0+"
+  "license": "GPL-2.0+",
+  "require": {
+    "kaltura/api-client-library": "^14.12"
+  }
 }

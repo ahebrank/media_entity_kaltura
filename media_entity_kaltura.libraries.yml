@@ -1,0 +1,7 @@
+player:
+  version: VERSION
+  js:
+    js/player.js: {}
+  dependencies:
+    - core/jquery
+    - core/jquery.once
