@@ -21,7 +21,7 @@ use Drupal\media_entity_kaltura\Plugin\media\Source\Kaltura;
 class KalturaEmbedFormatter extends FormatterBase {
 
   /**
-   * @inheritDoc
+   * {@inheritdoc}
    */
   public static function defaultSettings() {
     return [
@@ -31,7 +31,7 @@ class KalturaEmbedFormatter extends FormatterBase {
   }
 
   /**
-   * @inheritDoc
+   * {@inheritdoc}
    */
   public function settingsForm(array $form, FormStateInterface $form_state) {
     $elements = parent::settingsForm($form, $form_state);
@@ -98,4 +98,5 @@ class KalturaEmbedFormatter extends FormatterBase {
 
     return $element;
   }
+
 }

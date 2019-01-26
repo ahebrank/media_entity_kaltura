@@ -2,6 +2,7 @@
 
 namespace Drupal\media_entity_kaltura\Plugin\media\Source;
 
+use GuzzleHttp\Client;
 use Drupal\Component\Utility\Crypt;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityFieldManagerInterface;
@@ -83,7 +84,7 @@ class Kaltura extends MediaSourceBase {
    * @param \Drupal\media_entity_kaltura\KalturaSdkInterface $kaltura_sdk
    *   The Kaltura SDK service.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, EntityFieldManagerInterface $entity_field_manager, FieldTypePluginManagerInterface $field_type_manager, ConfigFactoryInterface $config_factory, \GuzzleHttp\Client $http_client, LoggerInterface $logger, KalturaSdkInterface $kaltura_sdk) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, EntityFieldManagerInterface $entity_field_manager, FieldTypePluginManagerInterface $field_type_manager, ConfigFactoryInterface $config_factory, Client $http_client, LoggerInterface $logger, KalturaSdkInterface $kaltura_sdk) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_type_manager, $entity_field_manager, $field_type_manager, $config_factory);
 
     $this->httpClient = $http_client;
@@ -115,7 +116,7 @@ class Kaltura extends MediaSourceBase {
    */
   public function defaultConfiguration() {
     return [
-      'thumbnails_directory' => 'public://kaltura_thumbnails'
+      'thumbnails_directory' => 'public://kaltura_thumbnails',
     ] + parent::defaultConfiguration();
   }
 

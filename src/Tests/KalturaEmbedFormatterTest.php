@@ -19,7 +19,7 @@ class KalturaEmbedFormatterTest extends WebTestBase {
    *
    * @var array
    */
-  public static $modules = array(
+  public static $modules = [
     'media_entity_kaltura',
     'media_entity',
     'node',
@@ -27,7 +27,7 @@ class KalturaEmbedFormatterTest extends WebTestBase {
     'views_ui',
     'block',
     'link',
-  );
+  ];
 
   /**
    * The test user.
@@ -44,7 +44,7 @@ class KalturaEmbedFormatterTest extends WebTestBase {
   protected $bundle;
 
   /**
-   * @inheritDoc
+   * {@inheritdoc}
    */
   protected function setUp() {
     parent::setUp();
@@ -126,7 +126,7 @@ class KalturaEmbedFormatterTest extends WebTestBase {
     // Set the source_url_field.
     $this->drupalGet('admin/structure/media/manage/' . $this->bundle->id());
     $edit = [
-      'type_configuration[kaltura][source_url_field]' => 'field_media_url'
+      'type_configuration[kaltura][source_url_field]' => 'field_media_url',
     ];
     $this->drupalPostForm(NULL, $edit, t('Save media bundle'));
 
@@ -148,4 +148,5 @@ class KalturaEmbedFormatterTest extends WebTestBase {
     // Assert that the formatter exists on this page.
     $this->assertFieldByXPath('//iframe');
   }
+
 }

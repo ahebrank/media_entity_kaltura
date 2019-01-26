@@ -78,7 +78,7 @@ class KalturaPlayer extends RenderElement {
               ],
             ],
             'media-entity-kaltura-js',
-          ]
+          ],
         ],
         'library' => [
           'media_entity_kaltura/player',
