@@ -17,12 +17,9 @@ interface KalturaSdkInterface {
   /**
    * Fully initialized Kaltura SDK object with admin level of permissions.
    *
-   * @param string $privileges
-   *   Scope of privileges to include in the returned SDK object.
-   *
    * @return \Kaltura\Client\Client
    *   Kaltura SDK object with admin level of permissions.
    */
-  public function getAdminClient($privileges);
+  public function getAdminClient();
 
 }

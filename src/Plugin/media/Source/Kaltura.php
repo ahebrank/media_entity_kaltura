@@ -189,12 +189,8 @@ class Kaltura extends MediaSourceBase {
    *   resource has no thumbnail at all.
    */
   protected function getLocalThumbnailUri(MediaInterface $media) {
-    // Unfortunately we have to issue the HTTP request to the Kaltura server
-    // even if we already have the thumbnail locally - to figure out the
-    // thumbnail extension. Probably there are some ways around it and we should
-    // come back to optimize it.
     try {
-      $kaltura_client = $this->kalturaSdk->getAdminClient('edit:*');
+      $kaltura_client = $this->kalturaSdk->getAdminClient();
 
       $thumbnail = $kaltura_client->getThumbAssetService()->getByEntryId($this->getSourceFieldValue($media));
       /** @var \Kaltura\Client\Type\ThumbAsset $thumbnail */
@@ -229,11 +225,7 @@ class Kaltura extends MediaSourceBase {
           return NULL;
         }
 
-        $local_uri = $directory . '/' . Crypt::hashBase64($this->getSourceFieldValue($media)) . '.' . $extension;
-
-        if (file_exists($local_uri)) {
-          return $local_uri;
-        }
+        $local_uri = $directory . '/' . Crypt::hashBase64($thumbnail->id) . '.' . $extension;
 
         $success = file_unmanaged_save_data($response->getBody()->getContents(), $local_uri, FILE_EXISTS_REPLACE);
         if ($success) {

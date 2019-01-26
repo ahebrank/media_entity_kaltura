@@ -57,7 +57,7 @@ class KalturaSdk implements KalturaSdkInterface {
   /**
    * {@inheritdoc}
    */
-  public function getAdminClient($privileges) {
+  public function getAdminClient() {
     $config = $this->configFactory->get('media_entity_kaltura.settings');
 
     try {
@@ -67,11 +67,11 @@ class KalturaSdk implements KalturaSdkInterface {
       $kaltura_client->setPartnerId($config->get('partner_id'));
 
       $kaltura_user = new User();
-      $kaltura_user->id = $this->currentUser->id();
-      $kaltura_user->screenName = $this->currentUser->getAccountName();
-      $kaltura_user->email = $this->currentUser->getEmail();
 
-      $session = $kaltura_client->getSessionService()->start($config->get('admin_secret'), $kaltura_user->id, SessionType::ADMIN, $kaltura_client->getPartnerId(), KalturaSdkInterface::EXPIRY, $privileges);
+      // When the session type is SessionType::ADMIN, the 'privileges' parameter
+      // is ignored. See
+      // https://knowledge.kaltura.com/kalturas-api-authentication-and-security
+      $session = $kaltura_client->getSessionService()->start($config->get('admin_secret'), $kaltura_user->id, SessionType::ADMIN, $kaltura_client->getPartnerId(), KalturaSdkInterface::EXPIRY, '');
 
       $kaltura_client->setKs($session);
 
