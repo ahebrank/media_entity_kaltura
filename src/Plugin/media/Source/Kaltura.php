@@ -12,9 +12,6 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\media\MediaInterface;
 use Drupal\media\MediaSourceBase;
 use Drupal\media_entity_kaltura\KalturaSdkInterface;
-use GuzzleHttp\Exception\RequestException;
-use Kaltura\Client\ApiException;
-use Kaltura\Client\ClientException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\File\MimeType\MimeTypeExtensionGuesser;
@@ -190,58 +187,58 @@ class Kaltura extends MediaSourceBase {
    *   resource has no thumbnail at all.
    */
   protected function getLocalThumbnailUri(MediaInterface $media) {
-    try {
-      $kaltura_client = $this->kalturaSdk->getAdminClient();
+    $kaltura_client = $this->kalturaSdk->getAdminClient();
 
-      $thumbnail = $kaltura_client->getThumbAssetService()->getByEntryId($this->getSourceFieldValue($media));
-      /** @var \Kaltura\Client\Type\ThumbAsset $thumbnail */
-      $thumbnail = reset($thumbnail);
-      $thumbnail_url = $kaltura_client->getThumbAssetService()->getUrl($thumbnail->id);
-    }
-    catch (ClientException $e) {
-      $this->logger->error($e->getMessage());
-
-      return NULL;
-    }
-    catch (ApiException $e) {
-      $this->logger->error($e->getMessage());
-
+    if (!$kaltura_client) {
+      $this->logger->error($this->t('Kaltura client not initialized. Check API configuration.'));
       return NULL;
     }
 
-    try {
-      $response = $this->httpClient->get($thumbnail_url);
-      if ($response->getStatusCode() == 200) {
-        $extension = 'jpg';
-        if ($response->hasHeader('Content-Type')) {
-          $extension = $this->mimeTypeExtensionGuesser->guess($response->getHeader('Content-Type')[0]);
-        }
+    $thumb_service = $kaltura_client->getThumbAssetService();
+    if (!$thumb_service) {
+      $this->logger->error($this->t('Unable to initialize Kaltura thumbnail retrieval service.'));
+      return NULL;
+    }
 
-        $directory = $this->getConfiguration()['thumbnails_directory'];
+    $thumbnail = $thumb_service->getByEntryId($this->getSourceFieldValue($media));
+    /** @var \Kaltura\Client\Type\ThumbAsset $thumbnail */
+    $thumbnail = reset($thumbnail);
+    $thumbnail_url = $thumb_service->getUrl($thumbnail->id);
 
-        if (!file_prepare_directory($directory, FILE_CREATE_DIRECTORY | FILE_MODIFY_PERMISSIONS)) {
-          $this->logger->error('Could not prepare thumbnail destination directory {dir} for Kaltura media.', [
-            '{dir}' => $directory,
-          ]);
-          return NULL;
-        }
+    if (!$thumbnail_url) {
+      $this->logger->error($this->t('Kaltura client could not find a thumbnail.'));
+      return NULL;
+    }
 
-        $local_uri = $directory . '/' . Crypt::hashBase64($thumbnail->id) . '.' . $extension;
-
-        $success = file_unmanaged_save_data($response->getBody()->getContents(), $local_uri, FILE_EXISTS_REPLACE);
-        if ($success) {
-          return $local_uri;
-        }
-
-        $this->logger->error('Could not save locally the Kaltura thumbnail. Local file: {local_file}', [
-          'local_file' => $local_uri,
-        ]);
+    $response = $this->httpClient->get($thumbnail_url);
+    if ($response->getStatusCode() == 200) {
+      $extension = 'jpg';
+      if ($response->hasHeader('Content-Type')) {
+        $extension = $this->mimeTypeExtensionGuesser->guess($response->getHeader('Content-Type')[0]);
       }
-    }
-    catch (RequestException $e) {
-      $this->logger->error($e->getMessage());
+
+      $directory = $this->getConfiguration()['thumbnails_directory'];
+
+      if (!file_prepare_directory($directory, FILE_CREATE_DIRECTORY | FILE_MODIFY_PERMISSIONS)) {
+        $this->logger->error($this->t('Could not prepare thumbnail destination directory {dir} for Kaltura media.', [
+          '{dir}' => $directory,
+        ]));
+        return NULL;
+      }
+
+      $local_uri = $directory . '/' . Crypt::hashBase64($thumbnail->id) . '.' . $extension;
+
+      $success = file_unmanaged_save_data($response->getBody()->getContents(), $local_uri, FILE_EXISTS_REPLACE);
+      if ($success) {
+        return $local_uri;
+      }
+
+      $this->logger->error($this->t('Could not save the Kaltura thumbnail to {local_file}', [
+        'local_file' => $local_uri,
+      ]));
     }
 
+    $this->logger->error($this->t('Unable to retrieve Kaltura thumbnail.'));
     return NULL;
   }
 
