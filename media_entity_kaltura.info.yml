@@ -4,4 +4,4 @@ description: Media entity kaltura provider.
 core: 8.x
 package: Media
 dependencies:
-  - media_entity
+  - media_entity:media_entity
