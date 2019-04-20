@@ -2,17 +2,15 @@
 
 namespace Drupal\media_entity_kaltura\Plugin\MediaEntity\Type;
 
-use Drupal\Core\Annotation\Translation;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityFieldManagerInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\media_entity\Annotation\MediaType;
 use Drupal\media_entity\MediaInterface;
 use Drupal\media_entity\MediaTypeBase;
 use GuzzleHttp\ClientInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use \DOMDocument;
+use DOMDocument;
 
 /**
  * Provides media type plugin for kaltura.
@@ -142,6 +140,7 @@ class Kaltura extends MediaTypeBase {
             }
           }
           return FALSE;
+
         case 'entry_id':
           // Extract the id from the src.
           preg_match('/entry_id=([a-zA-Z0-9_]*)/', $data['src'], $matches);
@@ -149,6 +148,7 @@ class Kaltura extends MediaTypeBase {
             return FALSE;
           }
           return $matches[1];
+
         case 'partner_id':
           // Extract the id from the src.
           preg_match('/\/p\/([a-zA-Z0-9_]*)/', $data['src'], $matches);
@@ -156,6 +156,7 @@ class Kaltura extends MediaTypeBase {
             return FALSE;
           }
           return $matches[1];
+
         case 'ui_conf_id':
           // Extract the id from the src.
           preg_match('/\/uiconf_id\/([a-zA-Z0-9_]*)/', $data['src'], $matches);
@@ -163,6 +164,7 @@ class Kaltura extends MediaTypeBase {
             return FALSE;
           }
           return $matches[1];
+
         case 'flash_vars':
           preg_match_all('/flashvars\[([A-Za-z0-9_\-\.]+)\]=([A-Za-z0-9_\-\.]+)/', $data['src'], $matches);
           if (!count($matches)) {
@@ -201,10 +203,10 @@ class Kaltura extends MediaTypeBase {
    * Returns the episode id from the source_url_field.
    *
    * @param \Drupal\media_entity\MediaInterface $media
-   *  The media entity.
+   *   The media entity.
    *
    * @return string|bool
-   *  The episode if from the source_url_field if found. False otherwise.
+   *   The episode if from the source_url_field if found. False otherwise.
    */
   protected function getMediaUrl(MediaInterface $media) {
     if (isset($this->configuration['source_url_field'])) {
@@ -228,7 +230,7 @@ class Kaltura extends MediaTypeBase {
    *   The kaltura Url.
    *
    * @return array
-   *  An array of embed data.
+   *   An array of embed data.
    */
   protected function getData($url) {
     $cid = 'media_embed_kaltura:' . md5($url);
@@ -243,11 +245,11 @@ class Kaltura extends MediaTypeBase {
 
       $dom = new DOMDocument();
       // Kaltura pages have broken markup...
-      $internalErrors = libxml_use_internal_errors(true);
+      $internalErrors = libxml_use_internal_errors(TRUE);
       $dom->loadHTML($data);
       libxml_use_internal_errors($internalErrors);
-      
-      // search for the embed
+
+      // Search for the embed.
       $nodes = $dom->getElementsByTagName('meta');
       foreach ($nodes as $node) {
         $prop = $node->getAttribute('property');
@@ -256,7 +258,7 @@ class Kaltura extends MediaTypeBase {
           break;
         }
       }
-      // thumbnail
+      // Thumbnail.
       $nodes = $dom->getElementsByTagName('meta');
       foreach ($nodes as $node) {
         $property = $node->getAttribute('property');
@@ -267,7 +269,7 @@ class Kaltura extends MediaTypeBase {
         }
       }
 
-      // haven't found a src? search for a codegenerator
+      // haven't found a src? search for a codegenerator.
       if (!isset($kaltura['src'])) {
         $nodes = $dom->getElementsByTagName('script');
         foreach ($nodes as $node) {
@@ -293,4 +295,5 @@ class Kaltura extends MediaTypeBase {
 
     return $kaltura;
   }
+
 }

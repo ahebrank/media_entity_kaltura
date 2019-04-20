@@ -21,6 +21,6 @@ function media_entity_kaltura_theme($existing, $type, $theme, $path) {
         'height' => NULL,
       ],
       'file' => 'media_entity_kaltura.theme.inc',
-    ]
+    ],
   ];
 }

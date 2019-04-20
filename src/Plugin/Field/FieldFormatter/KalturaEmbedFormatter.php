@@ -5,7 +5,6 @@ namespace Drupal\media_entity_kaltura\Plugin\Field\FieldFormatter;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\FormatterBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\media_entity\MediaTypeInterface;
 use Drupal\media_entity_kaltura\Plugin\MediaEntity\Type\Kaltura;
 
 /**
@@ -22,17 +21,17 @@ use Drupal\media_entity_kaltura\Plugin\MediaEntity\Type\Kaltura;
 class KalturaEmbedFormatter extends FormatterBase {
 
   /**
-   * @inheritDoc
+   * {@inheritdoc}
    */
   public static function defaultSettings() {
-    return array(
-        'width' => '400',
-        'height' => '285',
-      ) + parent::defaultSettings();
+    return [
+      'width' => '400',
+      'height' => '285',
+    ] + parent::defaultSettings();
   }
 
   /**
-   * @inheritDoc
+   * {@inheritdoc}
    */
   public function settingsForm(array $form, FormStateInterface $form_state) {
     $elements = parent::settingsForm($form, $form_state);
@@ -83,7 +82,7 @@ class KalturaEmbedFormatter extends FormatterBase {
 
     $element = [];
     if (($type = $media_entity->getType()) && $type instanceof kaltura) {
-      /** @var MediaTypeInterface $item */
+      /** @var \Drupal\media_entity\MediaTypeInterface $item */
       foreach ($items as $delta => $item) {
         $entry_id = $type->getField($media_entity, 'entry_id');
         $partner_id = $type->getField($media_entity, 'partner_id');
@@ -106,4 +105,5 @@ class KalturaEmbedFormatter extends FormatterBase {
 
     return $element;
   }
+
 }
